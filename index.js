@@ -120,6 +120,42 @@ app.get('/user/:user' , (req,res)=>{
   })
 })
 
+app.get('/users' , (req,res)=>{
+
+  const sql = 'select * from users';
+
+  con.query(sql , (err , result)=>{
+    if(err) throw err;
+    else{
+      res.send(result)
+    }
+  })
+})
+
+
+app.post('/accept' , (req,res)=>{
+
+  const user = req.body;
+
+  const uid = req.body.id;
+  const sql1 = 'insert into validuser set ?';
+  con.query(sql1,user,(err,result)=>{
+
+    if(err) throw err;
+    else{
+        const sql2 = `DELETE FROM users WHERE id= '${uid}'`;
+
+        con.query(sql2,(err,result)=>{
+
+          if(err) throw err;
+          else{
+            res.send(true)
+          }
+        })
+    }
+  })
+  
+})
 
 
 
