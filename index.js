@@ -157,6 +157,21 @@ app.post('/accept' , (req,res)=>{
   
 })
 
+app.delete('/reject/:id' ,(req,res)=>{
+
+  const uid = req.params.id;
+  const sql2 = `DELETE FROM users WHERE id= '${uid}'`;
+
+  con.query(sql2 , (err , result)=>{
+     if(err) throw err;
+          else{
+            res.send(true)
+          }
+
+  })
+
+})
+
 
 
 app.listen(port, () => {
