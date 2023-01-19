@@ -228,6 +228,19 @@ app.get('/cartInfo/:id' , (req , res)=>{
   })
 })
 
+app.get('/cart' , (req,res)=>{
+
+  const sql = 'select * from cart';
+
+  con.query(sql , (err , result)=>{
+
+    if(err) throw err;
+    else{
+      res.send(result)
+    }
+  })
+})
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
