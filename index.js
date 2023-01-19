@@ -108,7 +108,7 @@ app.get('/singleProduct/:id' , (req,res)=>{
 
 app.get('/user/:user' , (req,res)=>{
 
-  const sql = `select * from users where id = '${req.params.user}'`;
+  const sql = `select * from validuser where id = '${req.params.user}'`;
   con.query(sql , (err , result) =>{
     if(err){
 
@@ -157,6 +157,26 @@ app.post('/accept' , (req,res)=>{
   
 })
 
+
+app.get('/finduser/:id' , (req,res)=>{
+
+  const id = req.params.id;
+  console.log(id)
+
+  const sql = `select * from validuser where id='${id}'`;
+
+  con.query(sql,(err,result)=>{
+
+    if(err) throw err;
+    else{
+      
+      res.send(true);
+    }
+  })
+})
+
+
+
 app.delete('/reject/:id' ,(req,res)=>{
 
   const uid = req.params.id;
@@ -172,6 +192,41 @@ app.delete('/reject/:id' ,(req,res)=>{
 
 })
 
+
+app.post('/cart' , (req,res)=>{
+
+  const product = req.body[0];
+  const id = req.body[1];
+
+  var sql = `INSERT INTO cart (pid, uid) VALUES ("${product}", "${id}")`;
+
+  con.query(sql,(err , result) =>{
+    if(err) throw err;
+    else{
+      res.send(true);
+    }
+  })
+})
+
+
+app.get('/cartInfo/:id' , (req , res)=>{
+
+  const sql = `select * from cart where uid = '${req.params.id}'`;
+
+  con.query(sql,(err , result)=>{
+
+    if(err) throw err;
+    else{
+
+      if(result.length === 1){
+        res.send(true)
+      }
+      else{
+        res.send(false)
+      }
+    }
+  })
+})
 
 
 app.listen(port, () => {
