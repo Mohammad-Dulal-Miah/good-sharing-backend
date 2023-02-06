@@ -25,22 +25,69 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.post('/product' , (req , res)=>{
 
-   const sql = 'insert into product set ?';
-   con.query(sql , req.body , (err,result)=>{
-    if(err){
-       console.log(err);
-    }
-    else{
-        res.send("successfully added")
-    }
-   })
+/*call the get api for all products information
+this is going to the products component
+*/
+app.get('/get' , (req , res) =>{
 
+  const sql = 'select * from product';
+
+   con.query(sql , (err , result)=>{
+
+      if(err) throw err;
+      else{
+          res.send(result)
+      }
+  })
 })
 
 
-app.post('/newUser',(req,res)=>{
+  //call singleProduct api with id for single product Information
+  app.get('/singleProduct/:id' , (req,res)=>{
+
+    const sql = `select * from product where id = '${req.params.id}'`;
+     con.query(sql , (err , result) =>{
+      if(err){
+  
+        throw err;
+      }
+      else{
+        res.send(result)
+      }
+    })
+  })
+
+
+   /*
+       call this api for user have product or not
+       Yes --> valid true 
+       No --> valid false
+
+       true --> user can not add product in his/her cart
+    */
+app.get('/cartInfo/:id' , (req , res)=>{
+
+  const sql = `select * from cart where uid = '${req.params.id}'`;
+
+  con.query(sql,(err , result)=>{
+
+    if(err) throw err;
+    else{
+
+      if(result.length === 1){
+        res.send(true)
+      }
+      else{
+        res.send(false)
+      }
+    }
+  })
+})
+
+
+ //new user information will go newUser api for saved in database
+ app.post('/newUser',(req,res)=>{
 
   const data = req.body;
 
@@ -56,6 +103,41 @@ app.post('/newUser',(req,res)=>{
   })
 })
 
+  //check here user is valid or not form database from valid user
+  app.get('/finduser/:id' , (req,res)=>{
+
+    const id = req.params.id;
+   
+  
+    const sql = `select * from validuser where id='${id}'`;
+  
+    con.query(sql,(err,result)=>{
+  
+      if(err) throw err;
+      else{
+        
+        res.send(true);
+      }
+    })
+  })
+
+
+
+// app.post('/product' , (req , res)=>{
+
+//    const sql = 'insert into product set ?';
+//    con.query(sql , req.body , (err,result)=>{
+//     if(err){
+//        console.log(err);
+//     }
+//     else{
+//         res.send("successfully added")
+//     }
+//    })
+
+// })
+
+
 
 app.post('/admin' , (req,res)=>{
 
@@ -64,7 +146,7 @@ app.post('/admin' , (req,res)=>{
 
   const sql = `select * from admin where email = '${emailClient}' && password = '${passwordClient}'`;
 
-  con.query(sql,(err,result)=>{
+   con.query(sql,(err,result)=>{
 
     if(err) throw err;
     else{
@@ -79,32 +161,6 @@ app.post('/admin' , (req,res)=>{
 })
 
 
-app.get('/get' , (req , res) =>{
-
-    const sql = 'select * from product';
-
-    con.query(sql , (err , result)=>{
-
-        if(err) throw err;
-        else{
-            res.send(result)
-        }
-    })
-})
-
-app.get('/singleProduct/:id' , (req,res)=>{
-
-  const sql = `select * from product where id = '${req.params.id}'`;
-  con.query(sql , (err , result) =>{
-    if(err){
-
-      throw err;
-    }
-    else{
-      res.send(result)
-    }
-  })
-})
 
 app.get('/user/:user' , (req,res)=>{
 
@@ -115,6 +171,7 @@ app.get('/user/:user' , (req,res)=>{
       throw err;
     }
     else{
+    
       res.send(result)
     }
   })
@@ -145,7 +202,7 @@ app.post('/accept' , (req,res)=>{
     else{
         const sql2 = `DELETE FROM users WHERE id= '${uid}'`;
 
-        con.query(sql2,(err,result)=>{
+         con.query(sql2,(err,result)=>{
 
           if(err) throw err;
           else{
@@ -158,22 +215,6 @@ app.post('/accept' , (req,res)=>{
 })
 
 
-app.get('/finduser/:id' , (req,res)=>{
-
-  const id = req.params.id;
-  console.log(id)
-
-  const sql = `select * from validuser where id='${id}'`;
-
-  con.query(sql,(err,result)=>{
-
-    if(err) throw err;
-    else{
-      
-      res.send(true);
-    }
-  })
-})
 
 
 
@@ -209,24 +250,7 @@ app.post('/cart' , (req,res)=>{
 })
 
 
-app.get('/cartInfo/:id' , (req , res)=>{
 
-  const sql = `select * from cart where uid = '${req.params.id}'`;
-
-  con.query(sql,(err , result)=>{
-
-    if(err) throw err;
-    else{
-
-      if(result.length === 1){
-        res.send(true)
-      }
-      else{
-        res.send(false)
-      }
-    }
-  })
-})
 
 app.get('/cart' , (req,res)=>{
 
@@ -237,6 +261,37 @@ app.get('/cart' , (req,res)=>{
     if(err) throw err;
     else{
       res.send(result)
+    }
+  })
+})
+
+
+app.post('/userproduct' , (req , res)=>{
+
+  const data = req.body;
+
+  const sql = 'insert into userproduct set ?';
+  con.query(sql,data,(err,result)=>{
+
+    if(err){
+      console.log(err);
+    }
+    else{
+      res.send("success")
+    }
+  })
+})
+
+
+app.get('/userproduct' , (req , res) =>{
+
+  const sql = 'select * from userproduct';
+
+  con.query(sql,(err , result)=>{
+
+    if(err) throw err;
+    else{
+     res.send(result)
     }
   })
 })
