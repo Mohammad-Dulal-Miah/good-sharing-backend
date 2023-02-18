@@ -43,6 +43,23 @@ app.get('/get' , (req , res) =>{
 })
 
 
+app.get('/multipleProduct/:data' , (req,res)=>{
+
+  //console.log(req.params.data)
+  const sql = `select * from product where category = '${req.params.data}'`;
+   con.query(sql , (err , result) =>{
+    if(err){
+
+      throw err;
+    }
+    else{
+      //console.log(result)
+      res.send(result)
+    }
+  })
+})
+
+
   //call singleProduct api with id for single product Information
   app.get('/singleProduct/:id' , (req,res)=>{
 
@@ -296,6 +313,26 @@ app.get('/userproduct' , (req , res) =>{
   })
 })
 
+app.get('/category/:data',(req,res)=>{
+
+  console.log(req.params.data)
+})
+
+app.post('/taka' , (req , res)=>{
+
+  const email = req.body.email;
+  const money = req.body.memberTaka;
+
+  const sql = `update validuser set taka='${money}' where email = '${email}'`;
+  con.query(sql,(err , result)=>{
+
+    if(err) throw err;
+    else{
+     res.send(result)
+    }
+  })
+
+})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
