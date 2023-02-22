@@ -47,7 +47,6 @@ this is going to the products component
 app.get('/get/:option' , (req , res) =>{
 
   const op = req.params.option;
-  console.log(typeof(op))
   if(op === '0'){
 
     const sql = 'select * from product';
@@ -165,7 +164,13 @@ app.get('/cartInfo/:id' , (req , res)=>{
       if(err) throw err;
       else{
         
-        res.send(true);
+        if(result.length === 0){
+          return false;
+        }
+      
+        else{
+          res.send(true);
+        }
       }
     })
   })
@@ -296,6 +301,51 @@ app.post('/cart' , (req,res)=>{
       res.send(true);
     }
   })
+})
+
+
+app.post('/cart/confirm',(req,res)=>{
+
+ const cid = req.body.cid;
+ const pid = req.body.pid;
+ const stock = req.body.stock-1;
+
+ 
+
+ const sql = `DELETE FROM cart WHERE cartid='${cid}'`;
+ con.query(sql,(err,result)=>{
+
+  if(err) throw err;
+  else{
+   
+    const sql1 = `UPDATE product
+    SET stock = '${stock}'
+    WHERE id = '${pid}'`;
+
+    con.query(sql,(err , result)=>{
+      if(err) throw err;
+      else{
+        res.send(true)
+      }
+    })
+  }
+ })
+})
+
+app.post('/cart/cancel',(req,res)=>{
+
+  const cid = req.body.cid;
+  
+ const sql = `DELETE FROM cart WHERE cartid='${cid}'`;
+
+ con.query(sql , (err,result)=>{
+
+  if(err) throw err;
+  else{
+    res.send(true);
+  }
+ })
+
 })
 
 
