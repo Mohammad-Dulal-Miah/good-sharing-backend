@@ -588,8 +588,39 @@ app.post('/addProduct' , (req,res)=>{
 
   })
 
- 
+})
 
+//add user message in database
+
+app.post('/userMessage' , (req,res)=>{
+
+  const data = req.body;
+
+  const sql = 'insert into message set ?';
+
+  con.query(sql,data,(err , result)=>{
+
+    if(err) throw err;
+    else{
+      res.send(true);
+    }
+  })
+})
+
+
+//get user message
+
+app.get('/message' , (req,res)=>{
+
+  const sql = 'select * from message';
+
+  con.query(sql,(err,result)=>{
+
+    if(err) throw err;
+    else{
+      res.send(result);
+    }
+  })
 })
 
 app.listen(port, () => {
