@@ -165,7 +165,7 @@ app.get('/cartInfo/:id' , (req , res)=>{
       else{
         
         if(result.length === 0){
-          return false;
+         res.send(false);
         }
       
         else{
@@ -539,6 +539,57 @@ app.post("/ssl-payment-cancel", async (req, res) => {
   // );
 
   return res.redirect('http://localhost:3000/profile');
+})
+
+
+//add user product in main product list
+app.post('/addProduct' , (req,res)=>{
+
+  const data = req.body;
+  const id = req.body.id;
+
+  const sql = 'insert into product set ?';
+
+  con.query(sql ,data, (err,result)=>{
+
+    if(err) throw err;
+    else{
+
+      const sql = `DELETE FROM userproduct WHERE id='${id}'`;
+
+      con.query(sql,(err,result)=>{
+
+        if(err) throw err;
+        else{
+          res.send(true);
+        }
+      })
+
+    }
+
+  })
+
+
+  //cancel user product
+
+  app.get('/cancelProduct/:id' , (req,res)=>{
+
+    const id = req.params.id;
+    const sql = `DELETE FROM userproduct WHERE id='${id}'`;
+
+    con.query(sql,(err,result)=>{
+
+      if(err) throw err;
+      else{
+        res.send(true);
+      }
+    })
+
+
+  })
+
+ 
+
 })
 
 app.listen(port, () => {
